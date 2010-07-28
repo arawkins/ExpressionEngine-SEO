@@ -111,19 +111,19 @@ class Seo_upd {
 	function tabs()
 	{
 		$tabs['seo'] = array(
-		'title'=> array(
+		'seo_title'=> array(
 			'visible'	=> 'true',
 			'collapse'	=> 'false',
 			'htmlbuttons'	=> 'false',
 			'width'		=> '100%'
 			),
-		'keywords'=> array(
+		'seo_keywords'=> array(
 			'visible'	=> 'true',
 			'collapse'	=> 'false',
 			'htmlbuttons'	=> 'false',
 			'width'		=> '100%'
 			),
-		'description'=> array(
+		'seo_description'=> array(
 			'visible'	=> 'true',
 			'collapse'	=> 'false',
 			'htmlbuttons'	=> 'true',
