@@ -48,6 +48,7 @@ class Seo {
 		if(empty($entry_id)) {return '';}
 		$prepend = $this->EE->TMPL->fetch_param('prepend');
 		$append = $this->EE->TMPL->fetch_param('append');
+		$fallback = $this->EE->TMPL->fetch_param('fallback');
 		$site_id = $this->EE->config->item('site_id');
 		
 		$sql = "SELECT `title` FROM `exp_seo_data` WHERE `entry_id` = ".$this->EE->db->escape_str($entry_id)." AND `site_id` = ".$this->EE->db->escape_str($site_id).";";
@@ -69,6 +70,22 @@ class Seo {
 			return $this->return_data = $final_prepend.($res->row('title')).$final_append; //removed htmlentities()
 		}
 		
+		//Fallback
+		if($fallback != FALSE && $fallback != '') {
+			if(!empty($prepend)) {
+				$final_prepend = $prepend;
+			} else {
+				$final_prepend = $this->options['prepend_to_title'];
+			}
+			
+			if(!empty($append)) {
+				$final_append = $append;
+			} else {
+				$final_append = $this->options['append_to_title'];
+			}
+			return $this->return_data = $final_prepend.$fallback.$final_append;
+		}
+
 		//Revert to default
 		if(isset($this->options['use_default_title']) && $this->options['use_default_title'] == 'yes') {
 			return $this->return_data = $this->options['default_title'];
