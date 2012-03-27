@@ -58,7 +58,6 @@ class Seo_upd {
 		//$this->EE->db->query($sql);
 		
 		$this->EE->load->library('layout');
-		$this->EE->cp->add_layout_tabs($this->tabs(), 'seo');
 		
 		return TRUE;
 	}
