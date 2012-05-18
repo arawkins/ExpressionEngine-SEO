@@ -12,10 +12,11 @@
 
 class Seo {
 
-	var $return_data = '';
-	var $options = array();
+	protected $return_data = '';
+	protected $site_id;
+	protected $options = array();
 
-	var $defaults = array('append_to_title' => '',
+	protected $defaults = array('append_to_title' => '',
 						  'prepend_to_title' => '',
 						  'robots' => 'follow,index',
 						  'default_title' => '',
@@ -41,6 +42,9 @@ class Seo {
 			//Revert to defaults if no results found
 			$this->options = $this->defaults;
 		}
+
+		// Get site_id for use in db queries.
+		$this->site_id = $this->EE->config->item('site_id');
 	}
 
 	protected function _getEntryID() {
@@ -71,9 +75,8 @@ class Seo {
 		$prepend = $this->EE->TMPL->fetch_param('prepend');
 		$append = $this->EE->TMPL->fetch_param('append');
 		$fallback = $this->EE->TMPL->fetch_param('fallback');
-		$site_id = $this->EE->config->item('site_id');
 
-		$sql = "SELECT `title` FROM `exp_seo_data` WHERE `entry_id` = ".$this->EE->db->escape_str($entry_id)." AND `site_id` = ".$this->EE->db->escape_str($site_id).";";
+		$sql = "SELECT `title` FROM `exp_seo_data` WHERE `entry_id` = ".$this->EE->db->escape_str($entry_id)." AND `site_id` = ".$this->EE->db->escape_str($this->site_id).";";
 
 		$res = $this->EE->db->query($sql);
 		if($res->num_rows() > 0) {
@@ -119,8 +122,7 @@ class Seo {
 	function description() {
 		$entry_id = $this->_getEntryID();
 		if(empty($entry_id)) {return '';}
-		$site_id = $this->EE->config->item('site_id');
-		$sql = "SELECT `description` FROM `exp_seo_data` WHERE `entry_id` = ".$this->EE->db->escape_str($entry_id)." AND `site_id` = ".$this->EE->db->escape_str($site_id).";";
+		$sql = "SELECT `description` FROM `exp_seo_data` WHERE `entry_id` = ".$this->EE->db->escape_str($entry_id)." AND `site_id` = ".$this->EE->db->escape_str($this->site_id).";";
 		$res = $this->EE->db->query($sql);
 		if($res->num_rows() > 0) {
 			return $this->return_data = ($res->row('description'));	//removed htmlentities()
@@ -137,8 +139,7 @@ class Seo {
 	function keywords() {
 		$entry_id = $this->_getEntryID();
 		if(empty($entry_id)) {return '';}
-		$site_id = $this->EE->config->item('site_id');
-		$sql = "SELECT `keywords` FROM `exp_seo_data` WHERE `entry_id` = ".$this->EE->db->escape_str($entry_id)." AND `site_id` = ".$this->EE->db->escape_str($site_id).";";
+		$sql = "SELECT `keywords` FROM `exp_seo_data` WHERE `entry_id` = ".$this->EE->db->escape_str($entry_id)." AND `site_id` = ".$this->EE->db->escape_str($this->site_id).";";
 		$res = $this->EE->db->query($sql);
 		if($res->num_rows() > 0) {
 			return $this->return_data = ($res->row('keywords'));	//removed htmlentities()
