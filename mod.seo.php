@@ -80,9 +80,9 @@ class Seo {
 		$fallback = $this->EE->TMPL->fetch_param('fallback');
 
 		//Go ahead and actually get the title.
-		$sql = "SELECT `title` FROM `exp_seo_data` WHERE `entry_id` = ".$this->EE->db->escape_str($entry_id)." AND `site_id` = ".$this->EE->db->escape_str($this->site_id).";";
+		$sql = "SELECT `title` FROM `exp_seo_data` WHERE `entry_id` = ? AND `site_id` = ?;";
 
-		$res = $this->EE->db->query($sql);
+		$res = $this->EE->db->query($sql, array($entry_id, $this->site_id));
 		if ($res->num_rows() > 0) {
 			if (!empty($prepend)) {
 				$final_prepend = $prepend;
@@ -129,8 +129,9 @@ class Seo {
 		if (empty($entry_id)) return '';
 
 		//Go ahead and get the description
-		$sql = "SELECT `description` FROM `exp_seo_data` WHERE `entry_id` = ".$this->EE->db->escape_str($entry_id)." AND `site_id` = ".$this->EE->db->escape_str($this->site_id).";";
-		$res = $this->EE->db->query($sql);
+		$sql = "SELECT `description` FROM `exp_seo_data` WHERE `entry_id` = ? AND `site_id` = ?;";
+
+		$res = $this->EE->db->query($sql, array($entry_id, $this->site_id));
 		if ($res->num_rows() > 0) {
 			return $this->return_data = ($res->row('description'));	//removed htmlentities()
 		}
@@ -149,8 +150,9 @@ class Seo {
 		if (empty($entry_id)) return '';
 
 		//Go ahead and get the keywords.
-		$sql = "SELECT `keywords` FROM `exp_seo_data` WHERE `entry_id` = ".$this->EE->db->escape_str($entry_id)." AND `site_id` = ".$this->EE->db->escape_str($this->site_id).";";
-		$res = $this->EE->db->query($sql);
+		$sql = "SELECT `keywords` FROM `exp_seo_data` WHERE `entry_id` = ? AND `site_id` = ?;";
+
+		$res = $this->EE->db->query($sql, array($entry_id, $site_id));
 		if ($res->num_rows() > 0) {
 			return $this->return_data = ($res->row('keywords'));	//removed htmlentities()
 		}
