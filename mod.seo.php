@@ -58,8 +58,8 @@ class Seo {
 			if ($total_segments > 0) {
 				$last_segment = $this->EE->uri->segment($total_segments);
 
-				$sql = "SELECT `entry_id` FROM `exp_channel_titles` WHERE `url_title`=?";
-				$res = $this->EE->db->query($sql, array($last_segment));
+				$sql = "SELECT `entry_id` FROM `exp_channel_titles` WHERE `url_title` = ? AND `site_id` = ?;";
+				$res = $this->EE->db->query($sql, array($last_segment, $site_id));
 				if ($res->num_rows() > 0) {
 					$entry_id = $res->row()->entry_id;
 				}
