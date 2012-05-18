@@ -9,12 +9,12 @@
 * @link				http://www.digitalsurgeons.com
 * @license			http://creativecommons.org/licenses/by-sa/3.0/
 */
- 
+
 class Seo {
-	
+
 	var $return_data = '';
 	var $options = array();
-	
+
 	var $defaults = array('append_to_title' => '',
 						  'prepend_to_title' => '',
 						  'robots' => 'follow,index',
@@ -25,11 +25,11 @@ class Seo {
 						  'use_default_keywords' => '',
 						  'use_default_description' => ''
 						  );
-	
+
 	function Seo() {
 		// Make a local reference to the ExpressionEngine super object
 		$this->EE =& get_instance();
-		
+
 		//Get Options (configuration) on class load
 		$sql = "SELECT * FROM `exp_seo_options`;";
 		$res = $this->EE->db->query($sql);
@@ -72,9 +72,9 @@ class Seo {
 		$append = $this->EE->TMPL->fetch_param('append');
 		$fallback = $this->EE->TMPL->fetch_param('fallback');
 		$site_id = $this->EE->config->item('site_id');
-		
+
 		$sql = "SELECT `title` FROM `exp_seo_data` WHERE `entry_id` = ".$this->EE->db->escape_str($entry_id)." AND `site_id` = ".$this->EE->db->escape_str($site_id).";";
-		
+
 		$res = $this->EE->db->query($sql);
 		if($res->num_rows() > 0) {
 			if(!empty($prepend)) {
@@ -82,16 +82,16 @@ class Seo {
 			} else {
 				$final_prepend = $this->options['prepend_to_title'];
 			}
-			
+
 			if(!empty($append)) {
 				$final_append = $append;
 			} else {
 				$final_append = $this->options['append_to_title'];
 			}
-			
+
 			return $this->return_data = $final_prepend.($res->row('title')).$final_append; //removed htmlentities()
 		}
-		
+
 		//Fallback
 		if($fallback != FALSE && $fallback != '') {
 			if(!empty($prepend)) {
@@ -99,7 +99,7 @@ class Seo {
 			} else {
 				$final_prepend = $this->options['prepend_to_title'];
 			}
-			
+
 			if(!empty($append)) {
 				$final_append = $append;
 			} else {
@@ -125,7 +125,7 @@ class Seo {
 		if($res->num_rows() > 0) {
 			return $this->return_data = ($res->row('description'));	//removed htmlentities()
 		}
-		
+
 		//Revert to default
 		if(isset($this->options['use_default_description']) && $this->options['use_default_description'] == 'yes') {
 			return $this->return_data = $this->options['default_description'];
@@ -143,7 +143,7 @@ class Seo {
 		if($res->num_rows() > 0) {
 			return $this->return_data = ($res->row('keywords'));	//removed htmlentities()
 		}
-		
+
 		//Revert to default
 		if(isset($this->options['use_default_keywords']) && $this->options['use_default_keywords'] == 'yes') {
 			return $this->return_data = $this->options['default_keywords'];
@@ -151,18 +151,18 @@ class Seo {
 			return '';
 		}
 	}
-	
+
 	function canonical() {
 		$url = $this->EE->TMPL->fetch_param('url');
-		
+
 		if(empty($url)) {
 			$this->return_data = '';
 			return '';
 		}
-		
+
 		return $this->return_data = '<link rel="canonical" href="'.$url.'" />';
 	}
-	
+
 	function privacy() {
 		if(empty($this->options['robots'])) { $this->options['robots'] = $this->defaults['robots']; }
 		return $this->return_data = '<meta name="robots" content="'.$this->options['robots'].'" />';
