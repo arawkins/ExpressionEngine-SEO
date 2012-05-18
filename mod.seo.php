@@ -59,7 +59,7 @@ class Seo {
 				$last_segment = $this->EE->uri->segment($total_segments);
 
 				$sql = "SELECT `entry_id` FROM `exp_channel_titles` WHERE `url_title` = ? AND `site_id` = ?;";
-				$res = $this->EE->db->query($sql, array($last_segment, $site_id));
+				$res = $this->EE->db->query($sql, array($last_segment, $this->site_id));
 				if ($res->num_rows() > 0) {
 					$entry_id = $res->row()->entry_id;
 				}
@@ -152,7 +152,7 @@ class Seo {
 		//Go ahead and get the keywords.
 		$sql = "SELECT `keywords` FROM `exp_seo_data` WHERE `entry_id` = ? AND `site_id` = ?;";
 
-		$res = $this->EE->db->query($sql, array($entry_id, $site_id));
+		$res = $this->EE->db->query($sql, array($entry_id, $this->site_id));
 		if ($res->num_rows() > 0) {
 			return $this->return_data = ($res->row('keywords'));	//removed htmlentities()
 		}
