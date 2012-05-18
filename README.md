@@ -7,6 +7,10 @@ Quick Usage Guide
 *  Default Keywords 	- The keywords to use if no keyword content is found
 *  Default Description 	- The description content to use if no description is found
 
+Also note that title, keywords and description tags will fallback to the entry_id
+corresponding to the last uri segment, if it exists, before falling back to the
+defaults in the module control panel.
+
 ###Global Options - Additional Options
 * Prepend to all title tags 	 - Any content to add before all site title tags created via the module. You may need to add spaces after the text as necessary
 * Append to all title tags		 - Any content to add after all site title tags created via the module. You may need to add spaces before the text as necessary
