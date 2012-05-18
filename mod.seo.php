@@ -42,9 +42,31 @@ class Seo {
 			$this->options = $this->defaults;
 		}
 	}
-	
+
+	protected function _getEntryID() {
+		// First look for the entry_id parameter
+		$entry_id = $this->EE->TMPL->fetch_param('entry_id', '');
+
+		if ($entry_id == '') {
+			// Fallback to entry_id associated with last segment, if it exists
+			$total_segments = $this->EE->uri->total_segments();
+
+			if ($total_segments > 0) {
+				$last_segment = $this->EE->uri->segment($total_segments);
+
+				$sql = "SELECT `entry_id` FROM `exp_channel_data` WHERE `url_title`=?";
+				$q = $this->EE->db->query($sql, array($last_segment));
+				if ($q->num_rows() > 0) {
+					$entry_id = $q->row()->entry_id;
+				}
+			}
+		}
+
+		return $entry_id;
+	}
+
 	function title() {
-		$entry_id = $this->EE->TMPL->fetch_param('entry_id');
+		$entry_id = $this->_getEntryID();
 		if(empty($entry_id)) {return '';}
 		$prepend = $this->EE->TMPL->fetch_param('prepend');
 		$append = $this->EE->TMPL->fetch_param('append');
@@ -93,9 +115,9 @@ class Seo {
 			return '';
 		}
 	}
-	
+
 	function description() {
-		$entry_id = $this->EE->TMPL->fetch_param('entry_id');
+		$entry_id = $this->_getEntryID();
 		if(empty($entry_id)) {return '';}
 		$site_id = $this->EE->config->item('site_id');
 		$sql = "SELECT `description` FROM `exp_seo_data` WHERE `entry_id` = ".$this->EE->db->escape_str($entry_id)." AND `site_id` = ".$this->EE->db->escape_str($site_id).";";
@@ -111,9 +133,9 @@ class Seo {
 			return '';
 		}
 	}
-	
+
 	function keywords() {
-		$entry_id = $this->EE->TMPL->fetch_param('entry_id');
+		$entry_id = $this->_getEntryID();
 		if(empty($entry_id)) {return '';}
 		$site_id = $this->EE->config->item('site_id');
 		$sql = "SELECT `keywords` FROM `exp_seo_data` WHERE `entry_id` = ".$this->EE->db->escape_str($entry_id)." AND `site_id` = ".$this->EE->db->escape_str($site_id).";";
