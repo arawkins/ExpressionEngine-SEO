@@ -37,7 +37,7 @@
 		<p style="margin-bottom:15px;">
 			<?=form_label(lang('robots'), 'robots')?><br />
 	<?php
-	//to do:  determine which are true and false based on options
+		if (!isset($robots)) $robots = '';
 	?>
 			<?=form_radio('robots', 'noindex,nofollow', ($robots == 'noindex,nofollow') ? TRUE : FALSE, 'style="margin-bottom:3px;" id="noindexnofollow"')?> <?=form_label('<strong>Noindex, Nofollow</strong> - '.lang('most_private'), 'noindexnofollow')?><br />
 			<?=form_radio('robots', 'noindex,follow', ($robots == 'noindex,follow') ? TRUE : FALSE, 'style="margin-bottom:3px;" id="noindexfollow"')?> <?=form_label('<strong>Noindex, Follow</strong>', 'noindexfollow')?><br />
