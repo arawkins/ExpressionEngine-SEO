@@ -34,7 +34,7 @@ class Seo {
 		//Get Options (configuration) on class load
 		$sql = "SELECT * FROM `exp_seo_options`;";
 		$res = $this->EE->db->query($sql);
-		if($res->num_rows() > 0) {
+		if ($res->num_rows() > 0) {
 			foreach($res->result_array() as $row) {
 				$this->options[$row['key']] = $row['value'];
 			}
@@ -70,23 +70,27 @@ class Seo {
 	}
 
 	function title() {
+		//Get entry_id first
 		$entry_id = $this->_getEntryID();
-		if(empty($entry_id)) {return '';}
+		if (empty($entry_id)) return '';
+
+		//Other params
 		$prepend = $this->EE->TMPL->fetch_param('prepend');
 		$append = $this->EE->TMPL->fetch_param('append');
 		$fallback = $this->EE->TMPL->fetch_param('fallback');
 
+		//Go ahead and actually get the title.
 		$sql = "SELECT `title` FROM `exp_seo_data` WHERE `entry_id` = ".$this->EE->db->escape_str($entry_id)." AND `site_id` = ".$this->EE->db->escape_str($this->site_id).";";
 
 		$res = $this->EE->db->query($sql);
-		if($res->num_rows() > 0) {
-			if(!empty($prepend)) {
+		if ($res->num_rows() > 0) {
+			if (!empty($prepend)) {
 				$final_prepend = $prepend;
 			} else {
 				$final_prepend = $this->options['prepend_to_title'];
 			}
 
-			if(!empty($append)) {
+			if (!empty($append)) {
 				$final_append = $append;
 			} else {
 				$final_append = $this->options['append_to_title'];
@@ -96,14 +100,14 @@ class Seo {
 		}
 
 		//Fallback
-		if($fallback != FALSE && $fallback != '') {
-			if(!empty($prepend)) {
+		if ($fallback != FALSE && $fallback != '') {
+			if (!empty($prepend)) {
 				$final_prepend = $prepend;
 			} else {
 				$final_prepend = $this->options['prepend_to_title'];
 			}
 
-			if(!empty($append)) {
+			if (!empty($append)) {
 				$final_append = $append;
 			} else {
 				$final_append = $this->options['append_to_title'];
@@ -111,8 +115,8 @@ class Seo {
 			return $this->return_data = $final_prepend.$fallback.$final_append;
 		}
 
-		//Revert to default
-		if(isset($this->options['use_default_title']) && $this->options['use_default_title'] == 'yes') {
+		//Fallback to default
+		if (isset($this->options['use_default_title']) && $this->options['use_default_title'] == 'yes') {
 			return $this->return_data = $this->options['default_title'];
 		} else {
 			return '';
@@ -120,16 +124,19 @@ class Seo {
 	}
 
 	function description() {
+		//Get entry_id first.
 		$entry_id = $this->_getEntryID();
-		if(empty($entry_id)) {return '';}
+		if (empty($entry_id)) return '';
+
+		//Go ahead and get the description
 		$sql = "SELECT `description` FROM `exp_seo_data` WHERE `entry_id` = ".$this->EE->db->escape_str($entry_id)." AND `site_id` = ".$this->EE->db->escape_str($this->site_id).";";
 		$res = $this->EE->db->query($sql);
-		if($res->num_rows() > 0) {
+		if ($res->num_rows() > 0) {
 			return $this->return_data = ($res->row('description'));	//removed htmlentities()
 		}
 
-		//Revert to default
-		if(isset($this->options['use_default_description']) && $this->options['use_default_description'] == 'yes') {
+		//Fallback to default
+		if (isset($this->options['use_default_description']) && $this->options['use_default_description'] == 'yes') {
 			return $this->return_data = $this->options['default_description'];
 		} else {
 			return '';
@@ -137,16 +144,19 @@ class Seo {
 	}
 
 	function keywords() {
+		//Get entry_id first.
 		$entry_id = $this->_getEntryID();
-		if(empty($entry_id)) {return '';}
+		if (empty($entry_id)) return '';
+
+		//Go ahead and get the keywords.
 		$sql = "SELECT `keywords` FROM `exp_seo_data` WHERE `entry_id` = ".$this->EE->db->escape_str($entry_id)." AND `site_id` = ".$this->EE->db->escape_str($this->site_id).";";
 		$res = $this->EE->db->query($sql);
-		if($res->num_rows() > 0) {
+		if ($res->num_rows() > 0) {
 			return $this->return_data = ($res->row('keywords'));	//removed htmlentities()
 		}
 
-		//Revert to default
-		if(isset($this->options['use_default_keywords']) && $this->options['use_default_keywords'] == 'yes') {
+		//Fallback to default
+		if (isset($this->options['use_default_keywords']) && $this->options['use_default_keywords'] == 'yes') {
 			return $this->return_data = $this->options['default_keywords'];
 		} else {
 			return '';
@@ -156,7 +166,7 @@ class Seo {
 	function canonical() {
 		$url = $this->EE->TMPL->fetch_param('url');
 
-		if(empty($url)) {
+		if (empty($url)) {
 			$this->return_data = '';
 			return '';
 		}
@@ -165,7 +175,7 @@ class Seo {
 	}
 
 	function privacy() {
-		if(empty($this->options['robots'])) { $this->options['robots'] = $this->defaults['robots']; }
+		if (empty($this->options['robots'])) { $this->options['robots'] = $this->defaults['robots']; }
 		return $this->return_data = '<meta name="robots" content="'.$this->options['robots'].'" />';
 	}
 }
