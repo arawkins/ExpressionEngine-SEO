@@ -4,7 +4,7 @@
 * SEO Module
 *
 * @package			SEO
-* @version			1.3
+* @version			1.3.1
 * @author			Digital Surgeons
 * @link				http://www.digitalsurgeons.com
 * @license			http://creativecommons.org/licenses/by-sa/3.0/
@@ -72,6 +72,14 @@ class Seo {
 		return $entry_id;
 	}
 
+	protected function _defaultValue($type) {
+		if (isset($this->options["use_default_$type"]) && $this->options["use_default_$type"] == 'yes') {
+			return $this->options["default_$type"];
+		} else {
+			return '';
+		}
+	}
+
 	function title() {
 		//Get entry_id first
 		$entry_id = $this->_getEntryID();
@@ -80,70 +88,69 @@ class Seo {
 		$append = $this->EE->TMPL->fetch_param('append');
 		$fallback = $this->EE->TMPL->fetch_param('fallback', '');
 
-		if (!empty($entry_id) && $fallback == '') {
+		if (!empty($entry_id)) {
 			//Go ahead and actually get the title.
 			$sql = "SELECT `title` FROM `exp_seo_data` WHERE `entry_id` = ? AND `site_id` = ?;";
 
 			$res = $this->EE->db->query($sql, array($entry_id, $this->site_id));
+			$title = '';
 			if ($res->num_rows() > 0) {
-				if (!empty($prepend)) {
-					$final_prepend = $prepend;
-				} else {
-					$final_prepend = $this->options['prepend_to_title'];
+				$title = $res->row('title');
+			} elseif ($fallback == '') {
+				$sql = "SELECT `title` FROM `exp_channel_titles` WHERE `entry_id` = ? AND `site_id` = ?;";
+				$subres = $this->EE->db->query($sql, array($entry_id, $this->site_id));
+				if ($subres->num_rows() > 0) {
+					$title = $subres->row('title');
 				}
-
-				if (!empty($append)) {
-					$final_append = $append;
-				} else {
-					$final_append = $this->options['append_to_title'];
-				}
-
-				return $this->return_data = $final_prepend.($res->row('title')).$final_append; //removed htmlentities()
-			}
-		} else {
-			//Fallback
-			if ($fallback != FALSE && $fallback != '') {
-				if (!empty($prepend)) {
-					$final_prepend = $prepend;
-				} else {
-					$final_prepend = $this->options['prepend_to_title'];
-				}
-
-				if (!empty($append)) {
-					$final_append = $append;
-				} else {
-					$final_append = $this->options['append_to_title'];
-				}
-				return $this->return_data = $final_prepend.$fallback.$final_append;
-			}
-
-			if (isset($this->options['use_default_title']) && $this->options['use_default_title'] == 'yes') {
-				return $this->return_data = $this->options['default_title'];
 			} else {
-				return '';
+				$title = $fallback;
 			}
+
+			$this->return_data = ($title != '') ? $title : $this->_defaultValue('title');
+		} else {
+			$this->return_data = ($fallback != '') ? $fallback : $this->_defaultValue('title');
 		}
+
+		//Add in prepend/append
+		$final_prepend = '';
+		if (!empty($prepend)) {
+			$final_prepend = $prepend;
+		} else {
+			$final_prepend = $this->options['prepend_to_title'];
+		}
+
+		$final_append = '';
+		if (!empty($append)) {
+			$final_append = $append;
+		} else {
+			$final_append = $this->options['append_to_title'];
+		}
+
+		$this->return_data = $final_prepend.$this->return_data.$final_append;
+
+		return $this->return_data;
 	}
 
 	function description() {
 		//Get entry_id first.
 		$entry_id = $this->_getEntryID();
+
+		//Go ahead and get the description
 		if (!empty($entry_id)) {
-			//Go ahead and get the description
 			$sql = "SELECT `description` FROM `exp_seo_data` WHERE `entry_id` = ? AND `site_id` = ?;";
 
 			$res = $this->EE->db->query($sql, array($entry_id, $this->site_id));
+			$description = '';
 			if ($res->num_rows() > 0) {
-				return $this->return_data = ($res->row('description'));	//removed htmlentities()
+				$description = $res->row('description');
 			}
+
+			$this->return_data = ($description != '') ? $description: $this->_defaultValue('description');
 		} else {
-			//Fallback to default
-			if (isset($this->options['use_default_description']) && $this->options['use_default_description'] == 'yes') {
-				return $this->return_data = $this->options['default_description'];
-			} else {
-				return '';
-			}
+			$this->return_data = $this->_defaultValue('description');
 		}
+
+		return $this->return_data;
 	}
 
 	function keywords() {
@@ -154,17 +161,18 @@ class Seo {
 			$sql = "SELECT `keywords` FROM `exp_seo_data` WHERE `entry_id` = ? AND `site_id` = ?;";
 
 			$res = $this->EE->db->query($sql, array($entry_id, $this->site_id));
+			$keywords = '';
 			if ($res->num_rows() > 0) {
-				return $this->return_data = ($res->row('keywords'));	//removed htmlentities()
+				$keywords = $res->row('keywords');
 			}
+
+			$this->return_data = ($keywords != '') ? $keywords : $this->_defaultValue('keywords');
 		} else {
 			//Fallback to default
-			if (isset($this->options['use_default_keywords']) && $this->options['use_default_keywords'] == 'yes') {
-				return $this->return_data = $this->options['default_keywords'];
-			} else {
-				return '';
-			}
+			$this->return_data = $this->_defaultValue('keywords');
 		}
+
+		return $this->return_data;
 	}
 
 	function canonical() {
@@ -172,14 +180,17 @@ class Seo {
 
 		if (empty($url)) {
 			$this->return_data = '';
-			return '';
+		} else {
+			$this->return_data = '<link rel="canonical" href="'.$url.'" />';
 		}
 
-		return $this->return_data = '<link rel="canonical" href="'.$url.'" />';
+		return $this->return_data;
 	}
 
 	function privacy() {
-		if (empty($this->options['robots'])) { $this->options['robots'] = $this->defaults['robots']; }
+		if (empty($this->options['robots'])) {
+			$this->options['robots'] = $this->defaults['robots'];
+		}
 		return $this->return_data = '<meta name="robots" content="'.$this->options['robots'].'" />';
 	}
 }
