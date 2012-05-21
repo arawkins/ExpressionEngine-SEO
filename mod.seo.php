@@ -4,7 +4,7 @@
 * SEO Module
 *
 * @package			SEO
-* @version			1.3
+* @version			1.3.1
 * @author			Digital Surgeons
 * @link				http://www.digitalsurgeons.com
 * @license			http://creativecommons.org/licenses/by-sa/3.0/
