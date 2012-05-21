@@ -96,6 +96,12 @@ class Seo {
 			$title = '';
 			if ($res->num_rows() > 0) {
 				$title = $res->row('title');
+			} else {
+				$sql = "SELECT `title` FROM `exp_channel_titles` WHERE `entry_id` = ? AND `site_id` = ?;";
+				$res = $this->EE->db->query($sql, array($entry_id, $this->site_id));
+				if ($res->num_rows() > 0) {
+					$title = $res->row('title');
+				}
 			}
 
 			$this->return_data = ($title != '') ? ($res->row('title')) : $this->_defaultValue('title');
