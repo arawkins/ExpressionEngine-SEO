@@ -4,7 +4,7 @@
 * SEO Module
 *
 * @package			SEO
-* @version			1.3
+* @version			1.3.1
 * @author			Digital Surgeons
 * @link				http://www.digitalsurgeons.com
 * @license			http://creativecommons.org/licenses/by-sa/3.0/
@@ -88,7 +88,7 @@ class Seo {
 		$append = $this->EE->TMPL->fetch_param('append');
 		$fallback = $this->EE->TMPL->fetch_param('fallback', '');
 
-		if (!empty($entry_id) && $fallback == '') {
+		if (!empty($entry_id)) {
 			//Go ahead and actually get the title.
 			$sql = "SELECT `title` FROM `exp_seo_data` WHERE `entry_id` = ? AND `site_id` = ?;";
 
@@ -96,18 +96,19 @@ class Seo {
 			$title = '';
 			if ($res->num_rows() > 0) {
 				$title = $res->row('title');
-			} else {
+			} elseif ($fallback == '') {
 				$sql = "SELECT `title` FROM `exp_channel_titles` WHERE `entry_id` = ? AND `site_id` = ?;";
-				$res = $this->EE->db->query($sql, array($entry_id, $this->site_id));
-				if ($res->num_rows() > 0) {
-					$title = $res->row('title');
+				$subres = $this->EE->db->query($sql, array($entry_id, $this->site_id));
+				if ($subres->num_rows() > 0) {
+					$title = $subres->row('title');
 				}
+			} else {
+				$title = $fallback;
 			}
 
-			$this->return_data = ($title != '') ? ($res->row('title')) : $this->_defaultValue('title');
+			$this->return_data = ($title != '') ? $title : $this->_defaultValue('title');
 		} else {
-			//Manual fallback
-			$this->return_data = $fallback;
+			$this->return_data = ($fallback != '') ? $fallback : $this->_defaultValue('title');
 		}
 
 		//Add in prepend/append
