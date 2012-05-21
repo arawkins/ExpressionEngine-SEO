@@ -3,8 +3,8 @@
 
 class Seo_upd {
 
-	var $version = '1.2';
-	
+	var $version = '1.3';
+
 	function Seo_upd()
 	{
 		// Make a local reference to the ExpressionEngine super object
@@ -19,7 +19,7 @@ class Seo_upd {
 	 *
 	 * @access	public
 	 * @return	bool
-	 */	
+	 */
 	function install()
 	{
 		$data = array(
@@ -30,7 +30,7 @@ class Seo_upd {
 		);
 
 		$this->EE->db->insert('modules', $data);
-		
+
 		$table = "CREATE TABLE IF NOT EXISTS `exp_seo_data` (
 				`seo_id` INT( 10 ) NOT NULL AUTO_INCREMENT PRIMARY KEY ,
 				`channel_id` INT( 6 ) NOT NULL ,
@@ -41,29 +41,28 @@ class Seo_upd {
 				`keywords` TEXT NULL ,
 				`description` TEXT NULL )
 				CHARACTER SET utf8 COLLATE utf8_general_ci;";
-		
+
 		$this->EE->db->query($table);
-		
+
 		$options_table = "CREATE TABLE IF NOT EXISTS `exp_seo_options` (
 						 `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
 						 `key` VARCHAR( 255 ) NOT NULL ,
 						 `value` TEXT NOT NULL
 						 )
 						 CHARACTER SET utf8 COLLATE utf8_general_ci;";
-						 
+
 		$this->EE->db->query($options_table);
-		
+
 		//No actions set for this module
 		//$sql = "INSERT INTO exp_actions (class, method) VALUES ('seo', 'do_seo_submit')";
 		//$this->EE->db->query($sql);
-		
+
 		$this->EE->load->library('layout');
-		$this->EE->cp->add_layout_tabs($this->tabs(), 'seo');
-		
+
 		return TRUE;
 	}
-	
-	
+
+
 	// --------------------------------------------------------------------
 
 	/**
@@ -71,11 +70,11 @@ class Seo_upd {
 	 *
 	 * @access	public
 	 * @return	bool
-	 */	
+	 */
 	function uninstall()
-	{		
+	{
 		$query = $this->EE->db->query("SELECT module_id FROM exp_modules WHERE module_name = 'Seo'");
-				
+
 		$sql[] = "DELETE FROM exp_module_member_groups WHERE module_id = '".$query->row('module_id') ."'";
 		$sql[] = "DELETE FROM exp_modules WHERE module_name = 'Seo'";
 		$sql[] = "DELETE FROM exp_actions WHERE class = 'Seo'";
@@ -89,11 +88,11 @@ class Seo_upd {
 
 		$this->EE->load->library('layout');
 		$this->EE->layout->delete_layout_tabs($this->tabs());
-		
+
 		return TRUE;
 	}
-	
-	
+
+
 	// --------------------------------------------------------------------
 
 	/**
@@ -101,13 +100,13 @@ class Seo_upd {
 	 *
 	 * @access	public
 	 * @return	bool
-	 */	
-	
+	 */
+
 	function update($current='')
 	{
 		return TRUE;
 	}
-	
+
 	function tabs()
 	{
 		$tabs['seo'] = array(
@@ -128,10 +127,10 @@ class Seo_upd {
 			'collapse'	=> 'false',
 			'htmlbuttons'	=> 'true',
 			'width'		=> '100%'
-			)			
-		);	
-				
-		return $tabs;	
+			)
+		);
+
+		return $tabs;
 	}
 
 }
