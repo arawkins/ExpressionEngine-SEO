@@ -41,7 +41,7 @@ class Seo_mcp {
 	}
 	
 	function index() {
-		$this->EE->cp->set_variable('cp_page_title', $this->EE->lang->line('seo_module_name'));
+		$this->EE->view->cp_page_title =  lang('seo_module_name');
 		
 		if($this->usedefaults) {
 			return $this->EE->load->view('index', $this->defaults, TRUE);
@@ -51,7 +51,7 @@ class Seo_mcp {
 	}
 	
 	function update() {
-		$this->EE->cp->set_variable('cp_page_title', $this->EE->lang->line('seo_module_name'));
+		$this->EE->view->cp_page_title =  lang('seo_module_name');
 		
 		foreach($_POST as $k => $v) {
 			if($k == 'submit') continue;
